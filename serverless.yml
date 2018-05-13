@@ -3,7 +3,7 @@ custom:
   # Replace to your group name
   group: myGroup
   region: ap-northeast-1
-  instant:
+  instance:
     tag:
       key: Schedule
       value: true
