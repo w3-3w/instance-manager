@@ -105,7 +105,8 @@ async function processSlackRequestBody(body) {
       if (instances.size < 1) {
         return 'No valid instances found.';
       }
-      const displayTexts = instances.values().map(value => `${value.name} ${value.state}`).sort();
+      const displayTexts = Array.from(instances.values())
+          .map(value => `${value.name} ${value.state}`).sort();
       return displayTexts.join('\n');
     case 'schedule':
       return 'TODO';
