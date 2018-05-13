@@ -12,16 +12,22 @@ const ec2 = new AWS.EC2({
   apiVersion: '2016-11-15'
 });
 
-async function getInstances(...instanceNames) {
+async function getInstances(scheduledOnly, ...instanceNames) {
   const params = {
     DryRun: false,
-    Filters: [
-      {
-        Name: `tag:${process.env['TARGET_INSTANCE_TAG_KEY']}`,
-        Values: [process.env['TARGET_INSTANCE_TAG_VALUE']]
-      }
-    ]
+    Filters: []
   };
+  if (scheduledOnly) {
+    params.Filters.push({
+      Name: `tag:${process.env['TARGET_INSTANCE_TAG_KEY']}`,
+      Values: [process.env['TARGET_INSTANCE_TAG_VALUE']]
+    });
+  } else {
+    params.Filters.push({
+      Name: 'tag-key',
+      Values: [process.env['TARGET_INSTANCE_TAG_KEY']]
+    });
+  }
   if (instanceNames.length !== 0) {
     params.Filters.push({
       Name: 'tag:Name',
@@ -43,8 +49,8 @@ async function getInstances(...instanceNames) {
   return instances;
 }
 
-async function startInstances(...instanceNames) {
-  const instances = await getInstances(...instanceNames);
+async function startInstances(scheduledOnly, ...instanceNames) {
+  const instances = await getInstances(scheduledOnly, ...instanceNames);
   const instancesCanBeStarted = Array.from(instances.entries())
       .filter(entry => entry[1].stateCd === STATE_CD.STOPPED);
   if (instancesCanBeStarted.length > 0) {
@@ -61,8 +67,8 @@ async function startInstances(...instanceNames) {
   }
 }
 
-async function stopInstances(...instanceNames) {
-  const instances = await getInstances(...instanceNames);
+async function stopInstances(scheduledOnly, ...instanceNames) {
+  const instances = await getInstances(scheduledOnly, ...instanceNames);
   const instancesCanBeStopped = Array.from(instances.entries())
       .filter(entry => entry[1].stateCd === STATE_CD.RUNNING);
   if (instancesCanBeStopped.length > 0) {
@@ -90,11 +96,12 @@ async function processSlackRequestBody(body) {
   }
   switch (params[0]) {
     case 'start':
-      return startInstances(...params.slice(1));
+      return startInstances(false, ...params.slice(1));
     case 'stop':
-      return stopInstances(...params.slice(1));
+      return stopInstances(false, ...params.slice(1));
     case 'status':
-      const instances = await getInstances(...params.slice(1));
+    case 'list':
+      const instances = await getInstances(false, ...params.slice(1));
       if (instances.size < 1) {
         return 'No valid instances found.';
       }
@@ -113,7 +120,7 @@ user_id=${body['user_id']}
 }
 
 module.exports.scheduledStart = (event, context, callback) => {
-  startInstances().then(message => {
+  startInstances(true).then(message => {
     callback(null, { message, event });
   }, err => {
     callback(err);
@@ -121,7 +128,7 @@ module.exports.scheduledStart = (event, context, callback) => {
 };
 
 module.exports.scheduledStop = (event, context, callback) => {
-  stopInstances().then(message => {
+  stopInstances(true).then(message => {
     callback(null, { message, event });
   }, err => {
     callback(err);

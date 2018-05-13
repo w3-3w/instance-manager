@@ -5,7 +5,7 @@ custom:
   region: ap-northeast-1
   instance:
     tag:
-      key: Schedule
+      key: Scheduled
       value: true
   event:
     namePrefix: ${self:custom.group}-instance-control
@@ -20,7 +20,7 @@ custom:
 
 # =========================================================
 # Basically, you do not have to change the config below.
-# Only change when you know what you are doing.
+# Only change them when you know what you are doing.
 # =========================================================
 
 service: instance-controller-${self:custom.group}
