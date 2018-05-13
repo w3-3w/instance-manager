@@ -56,7 +56,7 @@ async function startInstances(scheduledOnly, ...instanceNames) {
   if (instancesCanBeStarted.length > 0) {
     const params = {
       DryRun: false,
-      InstancesIds: instancesCanBeStarted.map(entry => entry[0])
+      InstanceIds: instancesCanBeStarted.map(entry => entry[0])
     };
     const rawResult = await ec2.startInstances(params).promise();
     const startingInstanceIds = rawResult.StartingInstances.map(i => i.InstanceId);
@@ -74,7 +74,7 @@ async function stopInstances(scheduledOnly, ...instanceNames) {
   if (instancesCanBeStopped.length > 0) {
     const params = {
       DryRun: false,
-      InstancesIds: instancesCanBeStopped.map(entry => entry[0])
+      InstanceIds: instancesCanBeStopped.map(entry => entry[0])
     };
     const rawResult = await ec2.stopInstances(params).promise();
     const stoppingInstanceIds = rawResult.StoppingInstances.map(i => i.InstanceId);
