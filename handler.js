@@ -95,10 +95,22 @@ async function processSlackRequestBody(body) {
     return 'Invalid command.';
   }
   switch (params[0]) {
+    case 'startall':
+      return startInstances(false);
     case 'start':
-      return startInstances(false, ...params.slice(1));
+      if (params.length > 1) {
+        return startInstances(false, ...params.slice(1));
+      } else {
+        return 'No instance specified.';
+      }
+    case 'stopall':
+      return stopInstances(false);
     case 'stop':
-      return stopInstances(false, ...params.slice(1));
+      if (params.length > 1) {
+        return stopInstances(false, ...params.slice(1));
+      } else {
+        return 'No instance specified.';
+      }
     case 'status':
     case 'list':
       const instances = await getInstances(false, ...params.slice(1));
