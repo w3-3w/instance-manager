@@ -1,0 +1,120 @@
+custom:
+  # Replace to your group name
+  group: myGroup
+  event:
+    namePrefix: ${self:custom.group}-instance-control
+    initiallyEnable: false
+    startCron: cron(30 0 ? * MON-FRI *)
+    stopCron: cron(30 12 ? * MON-FRI *)
+
+service: instance-controller-${self:custom.group}
+frameworkVersion: "=1.27.2"
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: ap-northeast-1
+  versionFunctions: false
+  environment:
+    DEFAULT_AWS_REGION: ap-northeast-1
+    SLACK_INCOMING_WEBHOOK: dummy
+    SLACK_OUTGOING_TOKEN: 9OKJaeK7Z2Rd9QBiTL0kGpq1
+    TARGET_INSTANCE_TAG_KEY: Schedule
+    TARGET_INSTANCE_TAG_VALUE: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "events:EnableRule"
+        - "events:DisableRule"
+      Resource: "arn:aws:events:*:*:rule/${self:custom.event.namePrefix}-*"
+    - Effect: Allow
+      Action:
+        - "ec2:DescribeInstances"
+        - "ec2:StartInstances"
+        - "ec2:StopInstances"
+      Resource: "arn:aws:ec2:*:*:instance/*"
+
+# you can add packaging information here
+#package:
+#  include:
+#    - include-me.js
+#    - include-me-dir/**
+#  exclude:
+#    - exclude-me.js
+#    - exclude-me-dir/**
+
+functions:
+  scheduledStart:
+    handler: handler.scheduledStart
+    description: Starts instances on schedule
+    timeout: 10
+    events:
+      - schedule:
+          enabled: ${self:custom.event.initiallyEnable}
+          name: ${self:custom.event.namePrefix}-start
+          description: starts instances
+          rate: ${self:custom.event.startCron}
+  scheduledStop:
+    handler: handler.scheduledStop
+    description: Stops instances on schedule
+    timeout: 10
+    events:
+      - schedule:
+          enabled: ${self:custom.event.initiallyEnable}
+          name: ${self:custom.event.namePrefix}-stop
+          description: stops instances
+          rate: ${self:custom.event.stopCron}
+  slackControl:
+    handler: handler.slackControl
+    description: Deal with slack messages
+    timeout: 10
+    events:
+      - http:
+          path: slack
+          method: post
+
+#    The following are a few example events you can configure
+#    NOTE: Please make sure to change your handler code to work with those events
+#    Check the event documentation for details
+#    events:
+#      - http:
+#          path: users/create
+#          method: get
+#      - s3: ${env:BUCKET}
+#      - schedule: rate(10 minutes)
+#      - sns: greeter-topic
+#      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
+#      - alexaSkill: amzn1.ask.skill.xx-xx-xx-xx
+#      - alexaSmartHome: amzn1.ask.skill.xx-xx-xx-xx
+#      - iot:
+#          sql: "SELECT * FROM 'some_topic'"
+#      - cloudwatchEvent:
+#          event:
+#            source:
+#              - "aws.ec2"
+#            detail-type:
+#              - "EC2 Instance State-change Notification"
+#            detail:
+#              state:
+#                - pending
+#      - cloudwatchLog: '/aws/lambda/hello'
+#      - cognitoUserPool:
+#          pool: MyUserPool
+#          trigger: PreSignUp
+
+#    Define function environment variables here
+#    environment:
+#      variable2: value2
+
+# you can add CloudFormation resource templates here
+#resources:
+#  Resources:
+#    NewResource:
+#      Type: AWS::S3::Bucket
+#      Properties:
+#        BucketName: my-new-bucket
+#  Outputs:
+#     NewOutput:
+#       Description: "Description for the output"
+#       Value: "Some output value"
