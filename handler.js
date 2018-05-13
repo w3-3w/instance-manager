@@ -85,6 +85,40 @@ async function stopInstances(scheduledOnly, ...instanceNames) {
   }
 }
 
+async function displayInstances(scheduledOnly, ...instanceNames) {
+  const instances = await getInstances(scheduledOnly, ...instanceNames);
+  if (instances.size < 1) {
+    return 'No valid instances found.';
+  }
+  const displayTexts = Array.from(instances.values())
+      .map(value => `${value.name} ${value.state}`).sort();
+  return displayTexts.join('\n');
+}
+
+function processScheduleCommand(...params) {
+  if (params.length < 1) {
+    return 'TODO display both start and stop schedule status.';
+  }
+  switch (params[0]) {
+    case 'start':
+      return 'TODO';
+    case 'stop':
+      return 'TODO';
+    case 'on':
+    case 'enable':
+      return 'TODO enable both start and stop schedule.';
+    case 'off':
+    case 'disable':
+      return 'TODO disable both start and stop schedule.';
+    case 'toggle':
+      return 'TODO toggle both start and stop schedule.';
+    case 'instances':
+      return displayInstances(true, ...params.slice(1));
+    default:
+      return 'Invalid command.';
+  }
+}
+
 async function processSlackRequestBody(body) {
   const message = body['text'].substring(body['trigger_word'].length).trim();
   if (body['token'] !== process.env['SLACK_OUTGOING_TOKEN']) {
@@ -113,15 +147,9 @@ async function processSlackRequestBody(body) {
       }
     case 'status':
     case 'list':
-      const instances = await getInstances(false, ...params.slice(1));
-      if (instances.size < 1) {
-        return 'No valid instances found.';
-      }
-      const displayTexts = Array.from(instances.values())
-          .map(value => `${value.name} ${value.state}`).sort();
-      return displayTexts.join('\n');
+      return displayInstances(false, ...params.slice(1));
     case 'schedule':
-      return 'TODO';
+      return processScheduleCommand(...params.slice(1));
     case 'whoami':
       return `
 channel_id=${body['channel_id']}
