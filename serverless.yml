@@ -1,27 +1,9 @@
-# DO review config under 'custom' and change values as needed.
-custom:
-  # Replace to your group name
-  group: myGroup
-  region: ap-northeast-1
-  instance:
-    tag:
-      key: Scheduled
-      value: true
-  event:
-    namePrefix: ${self:custom.group}-instance-control
-    initiallyEnable: false
-    startRuleName: ${self:custom.event.namePrefix}-start
-    startCron: cron(30 0 ? * MON-FRI *)
-    stopRuleName: ${self:custom.event.namePrefix}-stop
-    stopCron: cron(30 12 ? * MON-FRI *)
-  slack:
-    incoming-webhook-url: dummy
-    outgoing-webhook-token: 9OKJaeK7Z2Rd9QBiTL0kGpq1
+# =========================================================
+# Basically, you do not have to modify this file.
+# Only modify this file when you know what you are doing.
+# =========================================================
 
-# =========================================================
-# Basically, you do not have to change the config below.
-# Only change them when you know what you are doing.
-# =========================================================
+custom: ${file(./config.yml)}
 
 service: instance-controller-${self:custom.group}
 frameworkVersion: "=1.27.2"
@@ -32,21 +14,22 @@ provider:
   stage: dev
   region: ${self:custom.region}
   versionFunctions: false
+  logRetentionInDays: 30
   environment:
     DEFAULT_AWS_REGION: ${self:custom.region}
     SLACK_INCOMING_WEBHOOK: ${self:custom.slack.incoming-webhook-url}
     SLACK_OUTGOING_TOKEN: ${self:custom.slack.outgoing-webhook-token}
     TARGET_INSTANCE_TAG_KEY: ${self:custom.instance.tag.key}
     TARGET_INSTANCE_TAG_VALUE: ${self:custom.instance.tag.value}
-    EVENT_START_RULE_NAME: ${self:custom.event.startRuleName}
-    EVENT_STOP_RULE_NAME: ${self:custom.event.stopRuleName}
+    EVENT_START_RULE_NAME: ${self:custom.event.namePrefix}-${self:custom.group}-start
+    EVENT_STOP_RULE_NAME: ${self:custom.event.namePrefix}-${self:custom.group}-stop
   iamRoleStatements:
     - Effect: Allow
       Action:
         - "events:DescribeRule"
         - "events:EnableRule"
         - "events:DisableRule"
-      Resource: "arn:aws:events:*:*:rule/${self:custom.event.namePrefix}-*"
+      Resource: "arn:aws:events:*:*:rule/${self:custom.event.namePrefix}-${self:custom.group}-*"
     - Effect: Allow
       Action:
         - "ec2:DescribeInstances"
@@ -62,7 +45,7 @@ functions:
     events:
       - schedule:
           enabled: ${self:custom.event.initiallyEnable}
-          name: ${self:custom.event.startRuleName}
+          name: ${self:custom.event.namePrefix}-${self:custom.group}-start
           description: starts instances
           rate: ${self:custom.event.startCron}
   scheduledStop:
@@ -72,7 +55,7 @@ functions:
     events:
       - schedule:
           enabled: ${self:custom.event.initiallyEnable}
-          name: ${self:custom.event.stopRuleName}
+          name: ${self:custom.event.namePrefix}-${self:custom.group}-stop
           description: stops instances
           rate: ${self:custom.event.stopCron}
   slackControl:
@@ -83,3 +66,10 @@ functions:
       - http:
           path: slack
           method: post
+
+package:
+  exclude:
+    - README.md
+    - LICENSE
+    - config.yml
+    - _config.yml
