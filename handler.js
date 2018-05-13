@@ -45,7 +45,8 @@ async function getInstances(...instanceNames) {
 
 async function startInstances(...instanceNames) {
   const instances = await getInstances(...instanceNames);
-  const instancesCanBeStarted = instances.entries().filter(entry => entry[1].stateCd === STATE_CD.STOPPED);
+  const instancesCanBeStarted = Array.from(instances.entries())
+      .filter(entry => entry[1].stateCd === STATE_CD.STOPPED);
   if (instancesCanBeStarted.length > 0) {
     const params = {
       DryRun: false,
@@ -62,7 +63,8 @@ async function startInstances(...instanceNames) {
 
 async function stopInstances(...instanceNames) {
   const instances = await getInstances(...instanceNames);
-  const instancesCanBeStopped = instances.entries().filter(entry => entry[1].stateCd === STATE_CD.RUNNING);
+  const instancesCanBeStopped = Array.from(instances.entries())
+      .filter(entry => entry[1].stateCd === STATE_CD.RUNNING);
   if (instancesCanBeStopped.length > 0) {
     const params = {
       DryRun: false,
