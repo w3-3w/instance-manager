@@ -36,7 +36,7 @@ provider:
         - "ec2:StopInstances"
       Resource: "*"
       Condition:
-        "ForAllValues:Null": ${file(./iamRoleConditionGenerator.js)}
+        "Null": ${file(./iamRoleConditionHelper.js)}
     - Effect: Allow
       Action:
         - "ec2:DescribeInstances"
@@ -78,4 +78,4 @@ package:
     - LICENSE
     - config.json
     - _config.json
-    - iamRoleConditionGenerator.js
+    - iamRoleConditionHelper.js
