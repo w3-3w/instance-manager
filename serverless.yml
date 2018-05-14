@@ -3,7 +3,7 @@
 # Only modify this file when you know what you are doing.
 # =========================================================
 
-custom: ${file(./config.yml)}
+custom: ${file(./config.json)}
 
 service: instance-controller-${self:custom.group}
 frameworkVersion: "=1.27.2"
@@ -29,12 +29,17 @@ provider:
         - "events:DescribeRule"
         - "events:EnableRule"
         - "events:DisableRule"
-      Resource: "arn:aws:events:*:*:rule/${self:custom.event.namePrefix}-${self:custom.group}-*"
+      Resource: "arn:${self:custom.partition}:events:*:*:rule/${self:custom.event.namePrefix}-${self:custom.group}-*"
+    - Effect: Allow
+      Action:
+        - "ec2:StartInstances"
+        - "ec2:StopInstances"
+      Resource: "*"
+      Condition:
+        "ForAllValues:Null": ${file(./iamRoleConditionGenerator.js)}
     - Effect: Allow
       Action:
         - "ec2:DescribeInstances"
-        - "ec2:StartInstances"
-        - "ec2:StopInstances"
       Resource: "*"
 
 functions:
@@ -71,5 +76,6 @@ package:
   exclude:
     - README.md
     - LICENSE
-    - config.yml
-    - _config.yml
+    - config.json
+    - _config.json
+    - iamRoleConditionGenerator.js
