@@ -16,6 +16,8 @@
   },
   "slack": {
     "incoming-webhook-url": "CHANGE-ME",
-    "outgoing-webhook-token": "CHANGE-ME"
+    "outgoing-webhook-token": "CHANGE-ME",
+    "channel-id": "DUMMY",
+    "permitted-user-ids": "DUMMY1,DUMMY2"
   }
 }

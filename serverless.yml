@@ -1,5 +1,5 @@
 # =========================================================
-# Basically, you do not have to modify this file.
+# Basically, you don't have to modify this file.
 # Only modify this file when you know what you are doing.
 # =========================================================
 
@@ -19,6 +19,8 @@ provider:
     DEFAULT_AWS_REGION: ${self:custom.region}
     SLACK_INCOMING_WEBHOOK: ${self:custom.slack.incoming-webhook-url}
     SLACK_OUTGOING_TOKEN: ${self:custom.slack.outgoing-webhook-token}
+    SLACK_CHANNEL_ID: ${self:custom.slack.channel-id}
+    SLACK_PERMITTED_USER_IDS: ${self:custom.slack.permitted-user-ids}
     TARGET_INSTANCE_TAG_KEY: ${self:custom.instance.tag.key}
     TARGET_INSTANCE_TAG_VALUE: ${self:custom.instance.tag.value}
     EVENT_START_RULE_NAME: ${self:custom.event.namePrefix}-${self:custom.group}-start
@@ -29,12 +31,14 @@ provider:
         - "events:DescribeRule"
         - "events:EnableRule"
         - "events:DisableRule"
+      # only allow operations on specified prefix
       Resource: "arn:${self:custom.partition}:events:*:*:rule/${self:custom.event.namePrefix}-${self:custom.group}-*"
     - Effect: Allow
       Action:
         - "ec2:StartInstances"
         - "ec2:StopInstances"
       Resource: "*"
+      # only allow operations on instances with configured tag key
       Condition:
         "Null": ${file(./iamRoleConditionHelper.js)}
     - Effect: Allow

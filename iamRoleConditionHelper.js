@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-// Serverless does't support variable parsing on keys.
+// Serverless doesn't support variable parsing on keys.
 // This is why this script is needed.
 // https://github.com/serverless/serverless/issues/2892
 module.exports = () => {
