@@ -83,3 +83,7 @@ package:
     - config.json
     - _config.json
     - iamRoleConditionHelper.js
+    - package.json
+    - aws-mock.js
+    - test/**
+    - node_modules/**

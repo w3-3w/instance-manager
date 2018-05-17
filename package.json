@@ -1,0 +1,28 @@
+{
+  "name": "instance-manager",
+  "version": "1.0.0",
+  "description": "Instance scheduler for AWS with slack intergration",
+  "main": "handler.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/w3-3w/instance-manager.git"
+  },
+  "keywords": [
+    "serverless"
+  ],
+  "author": "w3-3w",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/w3-3w/instance-manager/issues"
+  },
+  "homepage": "https://github.com/w3-3w/instance-manager#readme",
+  "devDependencies": {
+    "mocha": "^5.1.1"
+  }
+}

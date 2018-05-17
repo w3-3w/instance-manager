@@ -5,7 +5,7 @@ const STATE_CD = {
   RUNNING: 16
 };
 
-const AWS = require('aws-sdk');
+const AWS = process.env['TEST'] ? require('./aws-mock') : require('aws-sdk');
 AWS.config.region = process.env['DEFAULT_AWS_REGION'];
 
 const ec2 = new AWS.EC2({
