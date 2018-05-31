@@ -85,7 +85,7 @@ async function processSlackRequestBody(body) {
       return processScheduleCommand(...params.slice(1));
     case 'whoami':
       // tool for checking ids
-      return `channel_id=${body['channel_id']}\nuser_id=${body['user_id']}`;
+      return `user_id=${body['user_id']}`;
     default:
       return 'Invalid command.';
   }
