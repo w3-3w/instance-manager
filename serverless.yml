@@ -6,7 +6,7 @@
 custom: ${file(./config.json)}
 
 service: instance-controller-${self:custom.group}
-frameworkVersion: "=1.27.2"
+frameworkVersion: ">=1.27.0"
 
 provider:
   name: aws
@@ -48,7 +48,7 @@ provider:
 
 functions:
   scheduledStart:
-    handler: handler.scheduledStart
+    handler: schedule.start
     description: Starts instances on schedule
     timeout: 10
     events:
@@ -58,7 +58,7 @@ functions:
           description: starts instances
           rate: ${self:custom.event.startCron}
   scheduledStop:
-    handler: handler.scheduledStop
+    handler: schedule.stop
     description: Stops instances on schedule
     timeout: 10
     events:
@@ -68,7 +68,7 @@ functions:
           description: stops instances
           rate: ${self:custom.event.stopCron}
   slackControl:
-    handler: handler.slackControl
+    handler: slack.handler
     description: Deal with slack messages
     timeout: 10
     events:
