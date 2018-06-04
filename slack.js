@@ -48,7 +48,8 @@ async function processSlackRequestBody(body) {
     return 'Invalid channel.';
   }
   // user verification
-  const permittedUserIds = new Set(process.env['SLACK_PERMITTED_USER_IDS'].split(','));
+  const permittedUserIdsStr = process.env['SLACK_PERMITTED_USER_IDS'];
+  const permittedUserIds = new Set(permittedUserIdsStr ? permittedUserIdsStr.split(',') : undefined);
   if (!permittedUserIds.has(body['user_id'])) {
     return `User ${body['user_name']} is not permitted to perform this operation.`;
   }
@@ -83,9 +84,6 @@ async function processSlackRequestBody(body) {
     case 'schedule':
       // schedule operations
       return processScheduleCommand(...params.slice(1));
-    case 'whoami':
-      // tool for checking ids
-      return `user_id=${body['user_id']}`;
     default:
       return 'Invalid command.';
   }
