@@ -5,33 +5,69 @@ const {
   stopInstances,
   displayInstances
 } = require('./lib/instance');
+const processCommand = require('./lib/commandProcessor');
 
-/**
- * Process message params after "<trigger word> schedule".
- */
-function processScheduleCommand(...params) {
-  if (params.length < 1) {
-    return 'TODO display both start and stop schedule status.';
+const COMMAND_TREE = {
+  help() {
+    return `Available commands:
+status:   show instance status list
+startall: start all available instances
+start:    start specified instances
+stopall:  stop all available instances
+stop:     stop specified instances
+schedule: schedule configuration`;
+  },
+  async startall() {
+    return startInstances(false);
+  },
+  async start(...params) {
+    // start command should contain at least 1 server name
+    if (params.length > 0) {
+      return startInstances(false, ...params);
+    } else {
+      return 'No instance specified.';
+    }
+  },
+  async stopall() {
+    return stopInstances(false);
+  },
+  async stop(...params) {
+    // stop command should contain at least 1 server name
+    if (params.length > 0) {
+      return stopInstances(false, ...params);
+    } else {
+      return 'No instance specified.';
+    }
+  },
+  async status(...params) {
+    return displayInstances(false, ...params);
+  },
+  schedule: {
+    help() {
+      return `Available commands:
+status:    show schedule status
+enable:    enable schedule
+disable:   disable schedule
+toggle:    toggle schedule
+instances: show scheduled instance list`;
+    },
+    async status() {
+      return 'TODO show schedule status';
+    },
+    async enable(...params) {
+      return 'TODO enable schedule';
+    },
+    async disable(...params) {
+      return 'TODO disable schedule';
+    },
+    async toggle(...params) {
+      return 'TODO toggle schedule';
+    },
+    async instances() {
+      return `Scheduled instances:\n${await displayInstances(true)}`;
+    }
   }
-  switch (params[0]) {
-    case 'start':
-      return 'TODO';
-    case 'stop':
-      return 'TODO';
-    case 'on':
-    case 'enable':
-      return 'TODO enable both start and stop schedule.';
-    case 'off':
-    case 'disable':
-      return 'TODO disable both start and stop schedule.';
-    case 'toggle':
-      return 'TODO toggle both start and stop schedule.';
-    case 'instances':
-      return displayInstances(true, ...params.slice(1));
-    default:
-      return 'Invalid command.';
-  }
-}
+};
 
 /**
  * Process slack request body.
@@ -55,38 +91,8 @@ async function processSlackRequestBody(body) {
   }
   // split parameters by space
   const params = message.split(' ').filter(str => str);
-  if (params.length < 1) {
-    return 'Invalid command.';
-  }
-  switch (params[0]) {
-    case 'startall':
-      // start all available instances
-      return startInstances(false);
-    case 'start':
-      if (params.length > 1) {
-        return startInstances(false, ...params.slice(1));
-      } else {
-        return 'No instance specified.';
-      }
-    case 'stopall':
-      // stop all available instances
-      return stopInstances(false);
-    case 'stop':
-      if (params.length > 1) {
-        return stopInstances(false, ...params.slice(1));
-      } else {
-        return 'No instance specified.';
-      }
-    case 'status':
-    case 'list':
-      // show instance status list
-      return displayInstances(false, ...params.slice(1));
-    case 'schedule':
-      // schedule operations
-      return processScheduleCommand(...params.slice(1));
-    default:
-      return 'Invalid command.';
-  }
+  // process command
+  return processCommand(COMMAND_TREE, ...params);
 }
 
 module.exports.handler = (event, context, callback) => {
