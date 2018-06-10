@@ -1,5 +1,6 @@
 'use strict';
 
+const querystring = require('querystring');
 const {
   startInstances,
   stopInstances,
@@ -92,11 +93,10 @@ async function processSlackRequestBody(body) {
   // split parameters by space
   const params = message.split(' ').filter(str => str);
   // process command
-  return processCommand(COMMAND_TREE, ...params);
+  return `<@${body['user_id']}>\n${await processCommand(COMMAND_TREE, ...params)}`;
 }
 
 module.exports.handler = (event, context, callback) => {
-  const querystring = require('querystring');
   // parse body string to javascript object
   const requestBody = querystring.parse(event.body);
 

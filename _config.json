@@ -2,6 +2,7 @@
   "group": "MY-ORGANIZATION",
   "partition": "aws",
   "region": "ap-northeast-1",
+  "logRetentionInDays": 30,
   "instance": {
     "tag": {
       "key": "Scheduled",
@@ -15,9 +16,9 @@
     "stopCron": "cron(30 12 ? * MON-FRI *)"
   },
   "slack": {
-    "incoming-webhook-url": "CHANGE-ME",
-    "outgoing-webhook-token": "CHANGE-ME",
-    "channel-id": "DUMMY",
-    "permitted-user-ids": "DUMMY1,DUMMY2"
+    "incomingWebhookUrl": "CHANGE-ME",
+    "outgoingWebhookToken": "CHANGE-ME",
+    "channelId": "DUMMY",
+    "permittedUserIds": "DUMMY1,DUMMY2"
   }
 }
