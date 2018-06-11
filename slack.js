@@ -6,6 +6,12 @@ const {
   stopInstances,
   displayInstances
 } = require('./lib/instance');
+const {
+  displayRule,
+  enableRule,
+  disableRule,
+  toggleRule
+} = require('./lib/rule');
 const processCommand = require('./lib/commandProcessor');
 
 const COMMAND_TREE = {
@@ -53,16 +59,16 @@ toggle:    toggle schedule
 instances: show scheduled instance list`;
     },
     async status() {
-      return 'TODO show schedule status';
+      return displayRule();
     },
     async enable(...params) {
-      return 'TODO enable schedule';
+      return enableRule(...params);
     },
     async disable(...params) {
-      return 'TODO disable schedule';
+      return disableRule(...params);
     },
     async toggle(...params) {
-      return 'TODO toggle schedule';
+      return toggleRule(...params);
     },
     async instances() {
       return `Scheduled instances:\n${await displayInstances(true)}`;

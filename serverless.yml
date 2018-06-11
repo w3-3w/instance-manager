@@ -23,16 +23,22 @@ provider:
     SLACK_PERMITTED_USER_IDS: ${self:custom.slack.permittedUserIds}
     TARGET_INSTANCE_TAG_KEY: ${self:custom.instance.tag.key}
     TARGET_INSTANCE_TAG_VALUE: ${self:custom.instance.tag.value}
-    EVENT_START_RULE_NAME: ${self:custom.event.namePrefix}-${self:custom.group}-start
-    EVENT_STOP_RULE_NAME: ${self:custom.event.namePrefix}-${self:custom.group}-stop
+    EVENT_RULE_PREFIX: ${self:custom.event.namePrefix}-${self:custom.group}-
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - "events:DescribeRule"
+        - "events:ListRules"
+      Resource: "*"
+    - Effect: Allow
+      Action:
         - "events:EnableRule"
         - "events:DisableRule"
       # only allow operations on specified prefix
       Resource: "arn:${self:custom.partition}:events:*:*:rule/${self:custom.event.namePrefix}-${self:custom.group}-*"
+    - Effect: Allow
+      Action:
+        - "ec2:DescribeInstances"
+      Resource: "*"
     - Effect: Allow
       Action:
         - "ec2:StartInstances"
@@ -41,10 +47,6 @@ provider:
       # only allow operations on instances with configured tag key
       Condition:
         "Null": ${file(./iamRoleConditionHelper.js)}
-    - Effect: Allow
-      Action:
-        - "ec2:DescribeInstances"
-      Resource: "*"
 
 functions:
   scheduledStart:
