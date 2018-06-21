@@ -1,5 +1,7 @@
-# instance-manager
-Instance scheduler for AWS with slack intergration
+# savingway
+Savingway is a serverless application aimed to save unnecessary cost of non-production environments on AWS by creating cron schedules to start & stop instances.
+While creating hard schedules, savingway also provides flexible instance control interfaces.
+You can combine it with Slack or even your own application.
 
 ## Prerequisites
 

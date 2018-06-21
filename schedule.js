@@ -1,11 +1,11 @@
 'use strict';
 
 const {
-  startInstances,
-  stopInstances
-} = require('./lib/instance');
+  startEC2Instances,
+  stopEC2Instances
+} = require('./lib/ec2Instance');
 
-module.exports.start = (event, context, callback) => {
+module.exports.ec2Start = (event, context, callback) => {
   // start all scheduled instances
   startInstances(true).then(message => {
     callback(null, { message, event });
@@ -14,7 +14,7 @@ module.exports.start = (event, context, callback) => {
   });
 };
 
-module.exports.stop = (event, context, callback) => {
+module.exports.ec2Stop = (event, context, callback) => {
   // stop all scheduled instances
   stopInstances(true).then(message => {
     callback(null, { message, event });

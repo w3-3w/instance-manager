@@ -6,8 +6,10 @@ const fs = require('fs');
 // This script is a workaround.
 // https://github.com/serverless/serverless/issues/2892
 module.exports = () => {
-  const config = JSON.parse(fs.readFileSync('./config.json'));
-  const conditionKey = `ec2:ResourceTag/${config.instance.tag.key}`;
+  // path is relative to root
+  const configPath = './config.json';
+  const config = JSON.parse(fs.readFileSync(configPath));
+  const conditionKey = `ec2:ResourceTag/${config.tag.key}`;
   const conditionBody = {};
   conditionBody[conditionKey] = false;
   return conditionBody;
