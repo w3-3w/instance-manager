@@ -29,7 +29,8 @@ provider:
       Action:
         - "events:ListRules"
         - "ec2:DescribeInstances"
-        # - "rds:DescribeDBInstances"
+        - "rds:DescribeDBInstances"
+        - "rds:ListTagsForResource"
       Resource: "*"
     - Effect: Allow
       Action:
@@ -44,7 +45,15 @@ provider:
       Resource: "*"
       # only allow operations on ec2 instances with configured tag key
       Condition:
-        "Null": ${file(./helper/ec2ConditionHelper.js)}
+        "Null": ${file(./helper/iamPolicyConditionHelper.js):ec2}
+    - Effect: Allow
+      Action:
+        - "rds:StartDBInstance"
+        - "rds:StopDBInstance"
+      Resource: "*"
+      # only allow operations on rds instances with configured tag key
+      Condition:
+        "Null": ${file(./helper/iamPolicyConditionHelper.js):rds}
 
 functions:
   scheduledStartEC2:
@@ -67,6 +76,26 @@ functions:
           name: ${self:custom.event.namePrefix}-${self:custom.group}-ec2-stop
           description: stops EC2 instances
           rate: ${self:custom.event.ec2.stopCron}
+  scheduledStartRDS:
+    handler: schedule.rdsStart
+    description: Starts RDS instances on schedule
+    timeout: 10
+    events:
+      - schedule:
+          enabled: ${self:custom.event.initiallyEnable}
+          name: ${self:custom.event.namePrefix}-${self:custom.group}-rds-start
+          description: starts RDS instances
+          rate: ${self:custom.event.rds.startCron}
+  scheduledStopRDS:
+    handler: schedule.rdsStop
+    description: Stops RDS instances on schedule
+    timeout: 10
+    events:
+      - schedule:
+          enabled: ${self:custom.event.initiallyEnable}
+          name: ${self:custom.event.namePrefix}-${self:custom.group}-rds-stop
+          description: stops RDS instances
+          rate: ${self:custom.event.rds.stopCron}
   slackControl:
     handler: slack.handler
     description: Deal with slack messages

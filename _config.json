@@ -8,11 +8,15 @@
     "value": "true"
   },
   "event": {
-    "namePrefix": "instance-control",
+    "namePrefix": "savingway",
     "initiallyEnable": false,
     "ec2": {
       "startCron": "cron(30 0 ? * MON-FRI *)",
       "stopCron": "cron(30 12 ? * MON-FRI *)"
+    },
+    "rds": {
+      "startCron": "cron(15 0 ? * MON-FRI *)",
+      "stopCron": "cron(45 12 ? * MON-FRI *)"
     }
   },
   "slack": {

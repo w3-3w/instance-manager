@@ -30,23 +30,24 @@ async function processSlackRequestBody(body) {
   return `<@${body['user_id']}>\n${await processCommand(COMMAND_TREE, ...params)}`;
 }
 
-module.exports.handler = (event, context, callback) => {
-  // parse body string to javascript object
-  const requestBody = querystring.parse(event.body);
+module.exports = {
+  handler(event, context, callback) {
+    // parse body string to javascript object
+    const requestBody = querystring.parse(event.body);
 
-  processSlackRequestBody(requestBody).then(responseText => {
-    const response = {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        text: responseText
-      })
-    };
-    callback(null, response);
-  }, err => {
-    callback(err);
-  });
-
+    processSlackRequestBody(requestBody).then(responseText => {
+      const response = {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: responseText
+        })
+      };
+      callback(null, response);
+    }, err => {
+      callback(err);
+    });
+  }
 };
