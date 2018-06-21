@@ -7,7 +7,7 @@ const {
 
 module.exports.ec2Start = (event, context, callback) => {
   // start all scheduled instances
-  startInstances(true).then(message => {
+  startEC2Instances(true).then(message => {
     callback(null, { message, event });
   }, err => {
     callback(err);
@@ -16,7 +16,7 @@ module.exports.ec2Start = (event, context, callback) => {
 
 module.exports.ec2Stop = (event, context, callback) => {
   // stop all scheduled instances
-  stopInstances(true).then(message => {
+  stopEC2Instances(true).then(message => {
     callback(null, { message, event });
   }, err => {
     callback(err);
