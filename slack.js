@@ -10,9 +10,9 @@ const config = require('./config/slack');
  */
 async function processSlackRequestBody(body) {
   // get message without trigger word
-  const message = body['text'].substring(body['trigger_word'].length).trim();
+  const message = body['text'];
   // token verification
-  if (body['token'] !== config.outgoingToken) {
+  if (body['token'] !== config.verificationToken) {
     return 'Invalid token.';
   }
   // team verification
@@ -27,7 +27,7 @@ async function processSlackRequestBody(body) {
   if (!config.permittedUserIds.has(body['user_id'])) {
     return `User ${body['user_name']} is not permitted to perform this operation.`;
   }
-  // split parameters by space
+  // split parameters by space and remove blank params
   const params = message.split(' ').filter(str => str);
   // process command
   return `<@${body['user_id']}>\n${await processCommand(COMMAND_TREE, ...params)}`;
@@ -45,7 +45,8 @@ module.exports = {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          text: responseText
+          'response_type': 'in_channel',
+          'text': responseText
         })
       };
       callback(null, response);

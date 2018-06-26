@@ -18,7 +18,7 @@ provider:
   environment:
     DEFAULT_AWS_REGION: ${self:custom.region}
     SLACK_INCOMING_WEBHOOK: ${self:custom.slack.incomingWebhookUrl}
-    SLACK_OUTGOING_TOKEN: ${self:custom.slack.outgoingWebhookToken}
+    SLACK_VERIFICATION_TOKEN: ${self:custom.slack.verificationToken}
     SLACK_TEAM_ID: ${self:custom.slack.teamId}
     SLACK_CHANNEL_ID: ${self:custom.slack.channelId}
     SLACK_PERMITTED_USER_IDS: ${self:custom.slack.permittedUserIds}
