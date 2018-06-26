@@ -54,6 +54,8 @@ module.exports = () => ({
     // outgoing webhook token for savingway to verify that request comes from
     // your Slack outgoing webhook
     outgoingWebhookToken: 'CHANGE-ME',
+    // your Slack workspace team ID
+    teamId: 'DUMMY',
     // channel ID that slack commands come from
     channelId: 'DUMMY',
     // permitted user ID to perform Slack commands

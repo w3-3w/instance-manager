@@ -15,6 +15,10 @@ async function processSlackRequestBody(body) {
   if (body['token'] !== config.outgoingToken) {
     return 'Invalid token.';
   }
+  // team verification
+  if (config.teamId !== body['team_id']) {
+    return 'Invalid team.';
+  }
   // channel verification
   if (config.channelId !== body['channel_id']) {
     return 'Invalid channel.';

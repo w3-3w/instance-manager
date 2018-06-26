@@ -3,6 +3,7 @@
 module.exports = {
   incomingUrl: process.env['SLACK_INCOMING_WEBHOOK'],
   outgoingToken: process.env['SLACK_OUTGOING_TOKEN'],
+  teamId: process.env['SLACK_TEAM_ID'],
   channelId: process.env['SLACK_CHANNEL_ID'],
   permittedUserIds: (str => (
     new Set(str ? str.split(',') : undefined)
