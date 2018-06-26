@@ -3,7 +3,7 @@
 # Only modify this file when you know what you are doing.
 # =========================================================
 
-custom: ${file(./config.json)}
+custom: ${file(./config.js)}
 
 service: savingway-${self:custom.group}
 frameworkVersion: ">=1.27.0"
@@ -22,8 +22,8 @@ provider:
     SLACK_CHANNEL_ID: ${self:custom.slack.channelId}
     SLACK_PERMITTED_USER_IDS: ${self:custom.slack.permittedUserIds}
     TARGET_TAG_KEY: ${self:custom.tag.key}
-    TARGET_TAG_VALUE: ${self:custom.tag.value}
-    EVENT_RULE_PREFIX: ${self:custom.event.namePrefix}-${self:custom.group}
+    TARGET_TAG_VALUE: ${self:custom.tag.scheduledValue}
+    EVENT_RULE_PREFIX: savingway-${self:custom.group}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -37,7 +37,7 @@ provider:
         - "events:EnableRule"
         - "events:DisableRule"
       # only allow operations on specified prefix
-      Resource: "arn:${self:custom.partition}:events:*:*:rule/${self:custom.event.namePrefix}-${self:custom.group}-*"
+      Resource: "arn:${self:custom.partition}:events:*:*:rule/savingway-${self:custom.group}-*"
     - Effect: Allow
       Action:
         - "ec2:StartInstances"
@@ -63,7 +63,7 @@ functions:
     events:
       - schedule:
           enabled: ${self:custom.event.initiallyEnable}
-          name: ${self:custom.event.namePrefix}-${self:custom.group}-ec2-start
+          name: savingway-${self:custom.group}-ec2-start
           description: starts EC2 instances
           rate: ${self:custom.event.ec2.startCron}
   scheduledStopEC2:
@@ -73,7 +73,7 @@ functions:
     events:
       - schedule:
           enabled: ${self:custom.event.initiallyEnable}
-          name: ${self:custom.event.namePrefix}-${self:custom.group}-ec2-stop
+          name: savingway-${self:custom.group}-ec2-stop
           description: stops EC2 instances
           rate: ${self:custom.event.ec2.stopCron}
   scheduledStartRDS:
@@ -83,7 +83,7 @@ functions:
     events:
       - schedule:
           enabled: ${self:custom.event.initiallyEnable}
-          name: ${self:custom.event.namePrefix}-${self:custom.group}-rds-start
+          name: savingway-${self:custom.group}-rds-start
           description: starts RDS instances
           rate: ${self:custom.event.rds.startCron}
   scheduledStopRDS:
@@ -93,7 +93,7 @@ functions:
     events:
       - schedule:
           enabled: ${self:custom.event.initiallyEnable}
-          name: ${self:custom.event.namePrefix}-${self:custom.group}-rds-stop
+          name: savingway-${self:custom.group}-rds-stop
           description: stops RDS instances
           rate: ${self:custom.event.rds.stopCron}
   slackControl:
@@ -109,6 +109,6 @@ package:
   exclude:
     - README.md
     - LICENSE
-    - config.json
-    - _config.json
+    - config.js
+    - _config.js
     - helper/**

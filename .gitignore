@@ -6,4 +6,4 @@ jspm_packages
 .serverless
 
 # Custom config file
-config.json
+config.js

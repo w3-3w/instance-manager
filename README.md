@@ -12,11 +12,9 @@ Use `npm install -g serverless` to install serverless framework.
 
 ## Configuration
 
-Make a copy of `_config.json` and rename to `config.json` .
+Make a copy of `_config.js` and rename to `config.js` .
 
-Open `config.json` and edit it to meet your situation.
-
-Here is the description for `config.json`.
+Open `config.js` and edit it to meet your situation.
 
 TODO
 
