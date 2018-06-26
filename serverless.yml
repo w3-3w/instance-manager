@@ -15,6 +15,7 @@ provider:
   region: ${self:custom.region}
   versionFunctions: false
   logRetentionInDays: ${self:custom.logRetentionInDays}
+  timeout: 10
   environment:
     DEFAULT_AWS_REGION: ${self:custom.region}
     SLACK_INCOMING_WEBHOOK: ${self:custom.slack.incomingWebhookUrl}
@@ -60,7 +61,6 @@ functions:
   scheduledStartEC2:
     handler: schedule.ec2Start
     description: Starts EC2 instances on schedule
-    timeout: 10
     events:
       - schedule:
           enabled: ${self:custom.event.initiallyEnable}
@@ -70,7 +70,6 @@ functions:
   scheduledStopEC2:
     handler: schedule.ec2Stop
     description: Stops EC2 instances on schedule
-    timeout: 10
     events:
       - schedule:
           enabled: ${self:custom.event.initiallyEnable}
@@ -80,7 +79,6 @@ functions:
   scheduledStartRDS:
     handler: schedule.rdsStart
     description: Starts RDS instances on schedule
-    timeout: 10
     events:
       - schedule:
           enabled: ${self:custom.event.initiallyEnable}
@@ -90,21 +88,13 @@ functions:
   scheduledStopRDS:
     handler: schedule.rdsStop
     description: Stops RDS instances on schedule
-    timeout: 10
     events:
       - schedule:
           enabled: ${self:custom.event.initiallyEnable}
           name: savingway-${self:custom.group}-rds-stop
           description: stops RDS instances
           rate: ${self:custom.event.rds.stopCron}
-  slackControl:
-    handler: slack.handler
-    description: Deal with slack messages
-    timeout: 10
-    events:
-      - http:
-          path: slack
-          method: post
+  slackControl: ${file(./helper/slackEnableHelper.js)}
 
 package:
   exclude:

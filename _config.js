@@ -49,10 +49,17 @@ module.exports = () => ({
   },
   // Slack integration
   slack: {
+    // whether enable slack control or not
+    // Savingway makes best efforts in security. Still, if you have security
+    // concern and do not want to expose endpoint to Internet, you can set this
+    // to false.
+    // When set to false, no endpoint will be exposed to Internet and thus
+    // operating through slack command functionality will not be available.
+    enabled: true,
     // incoming webhook url for savingway to post messages to Slack
     incomingWebhookUrl: 'CHANGE-ME',
     // verification token for savingway to verify that request comes from your
-    // savingway application
+    // slack command
     verificationToken: 'CHANGE-ME',
     // your Slack workspace team ID
     teamId: 'DUMMY',
