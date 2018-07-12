@@ -8,9 +8,26 @@ const {
   startRDSInstances,
   stopRDSInstances
 } = require('./lib/rdsInstance');
+const {
+  excludeDays,
+  timezoneOffset
+} = require('./config/rule');
+
+function isExcludeDay() {
+  const now = new Date(Date.now() + timezoneOffset * 3600000);
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  return excludeDays.has(`${month}/${day}`);
+}
 
 module.exports = {
   ec2Start(event, context, callback) {
+    if (isExcludeDay()) {
+      return callback(null, {
+        message: 'skipped',
+        event
+      });
+    }
     // start all scheduled instances
     startEC2Instances(true).then(message => {
       callback(null, { message, event });
@@ -20,6 +37,12 @@ module.exports = {
   },
 
   ec2Stop(event, context, callback) {
+    if (isExcludeDay()) {
+      return callback(null, {
+        message: 'skipped',
+        event
+      });
+    }
     // stop all scheduled instances
     stopEC2Instances(true).then(message => {
       callback(null, { message, event });
@@ -29,6 +52,12 @@ module.exports = {
   },
 
   rdsStart(event, context, callback) {
+    if (isExcludeDay()) {
+      return callback(null, {
+        message: 'skipped',
+        event
+      });
+    }
     // start all scheduled instances
     startRDSInstances(true).then(message => {
       callback(null, { message, event });
@@ -38,6 +67,12 @@ module.exports = {
   },
 
   rdsStop(event, context, callback) {
+    if (isExcludeDay()) {
+      return callback(null, {
+        message: 'skipped',
+        event
+      });
+    }
     // stop all scheduled instances
     stopRDSInstances(true).then(message => {
       callback(null, { message, event });

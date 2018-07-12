@@ -26,6 +26,8 @@ provider:
     TARGET_TAG_KEY: ${self:custom.tag.key}
     TARGET_TAG_VALUE: ${self:custom.tag.scheduledValue}
     EVENT_RULE_PREFIX: savingway-${self:custom.group}
+    EVENT_EXCLUDED_DAYS: ${self:custom.event.excludeDays}
+    TIMEZONE_OFFSET: ${self:custom.timezoneOffset}
   iamRoleStatements:
     - Effect: Allow
       Action:

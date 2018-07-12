@@ -11,6 +11,8 @@ module.exports = () => ({
   partition: 'aws',
   // region you want to deploy savingway to
   region: 'ap-northeast-1',
+  // your timezone offset compare to UTC in hours
+  timezoneOffset: '9',
   // log of Lambda functions in CloudWatch expires after
   logRetentionInDays: 30,
   // AWS resource tag config
@@ -45,7 +47,12 @@ module.exports = () => ({
       startCron: 'cron(15 0 ? * MON-FRI *)',
       // cron expression to stop scheduled RDS instances
       stopCron: 'cron(45 12 ? * MON-FRI *)'
-    }
+    },
+    // string that specify dates that should be excluded in schedule
+    // On these days, the cron event will be ignored by Lambda functions.
+    // Split month and day by "/", join dates by ",".
+    // For continuous days of the same month, you can specify day range by "-".
+    excludeDays: '4/30,5/1-4,12/31,1/1-3'
   },
   // Slack integration
   slack: {
