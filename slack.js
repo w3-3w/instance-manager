@@ -34,24 +34,20 @@ async function processSlackRequestBody(body) {
 }
 
 module.exports = {
-  handler(event, context, callback) {
+  async handler(event, context) {
     // parse body string to javascript object
     const requestBody = querystring.parse(event.body);
 
-    processSlackRequestBody(requestBody).then(responseText => {
-      const response = {
-        statusCode: 200,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          'response_type': 'in_channel',
-          'text': responseText
-        })
-      };
-      callback(null, response);
-    }, err => {
-      callback(err);
-    });
+    const message = await processSlackRequestBody(requestBody);
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'response_type': 'in_channel',
+        'text': responseText
+      })
+    };
   }
 };

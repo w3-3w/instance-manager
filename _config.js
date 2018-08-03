@@ -12,7 +12,7 @@ module.exports = () => ({
   // region you want to deploy savingway to
   region: 'ap-northeast-1',
   // your timezone offset compare to UTC in hours
-  timezoneOffset: '9',
+  timezoneOffset: 9,
   // log of Lambda functions in CloudWatch expires after
   logRetentionInDays: 30,
   // AWS resource tag config

@@ -21,63 +21,51 @@ function isExcludeDay() {
 }
 
 module.exports = {
-  ec2Start(event, context, callback) {
+  async ec2Start(event, context) {
     if (isExcludeDay()) {
-      return callback(null, {
+      return {
         message: 'skipped',
         event
-      });
+      };
     }
     // start all scheduled instances
-    startEC2Instances(true).then(message => {
-      callback(null, { message, event });
-    }, err => {
-      callback(err);
-    });
+    const message = await startEC2Instances(true);
+    return { message, event };
   },
 
-  ec2Stop(event, context, callback) {
+  async ec2Stop(event, context) {
     if (isExcludeDay()) {
-      return callback(null, {
+      return {
         message: 'skipped',
         event
-      });
+      };
     }
     // stop all scheduled instances
-    stopEC2Instances(true).then(message => {
-      callback(null, { message, event });
-    }, err => {
-      callback(err);
-    });
+    const message = await stopEC2Instances(true);
+    return { message, event };
   },
 
-  rdsStart(event, context, callback) {
+  async rdsStart(event, context) {
     if (isExcludeDay()) {
-      return callback(null, {
+      return {
         message: 'skipped',
         event
-      });
+      };
     }
     // start all scheduled instances
-    startRDSInstances(true).then(message => {
-      callback(null, { message, event });
-    }, err => {
-      callback(err);
-    });
+    const message = await startRDSInstances(true);
+    return { message, event };
   },
 
-  rdsStop(event, context, callback) {
+  async rdsStop(event, context) {
     if (isExcludeDay()) {
-      return callback(null, {
+      return {
         message: 'skipped',
         event
-      });
+      };
     }
     // stop all scheduled instances
-    stopRDSInstances(true).then(message => {
-      callback(null, { message, event });
-    }, err => {
-      callback(err);
-    });
+    const message = await stopRDSInstances(true);
+    return { message, event };
   }
 };

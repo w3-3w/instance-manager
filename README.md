@@ -5,8 +5,8 @@ You can combine it with Slack or even your own application.
 
 ## Prerequisites
 
-* Node.js v8.x
-* serverless framework >= v1.27.0
+* Node.js > v6.x
+* serverless framework >= v1.29.2
 
 Use `npm install -g serverless` to install serverless framework.
 

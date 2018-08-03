@@ -6,7 +6,7 @@
 custom: ${file(./config.js)}
 
 service: savingway-${self:custom.group}
-frameworkVersion: ">=1.27.0"
+frameworkVersion: ">=1.29.2"
 
 provider:
   name: aws
